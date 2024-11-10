@@ -1,25 +1,36 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
-function App() {
+function QuoteGenerator() {
+  const [quote, setQuote] = useState("Clique abaixo para gerar uma nova citação!");
+
+  const fetchQuote = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/quotes');
+      const data = await response.json();
+      const randomIndex = Math.floor(Math.random() * data.length);
+      setQuote(data[randomIndex].text);
+    } catch (error) {
+      console.error("Erro ao buscar citação:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuote();
+  }, []);
+
+  const toggleTheme = () => {
+    document.body.classList.toggle('dark-mode');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>Citação do Dia</h1>
+      <p>{quote}</p>
+      <button onClick={fetchQuote}>Nova Citação</button>
+      <button onClick={toggleTheme}>Alternar Tema</button>
     </div>
   );
 }
 
-export default App;
+export default QuoteGenerator;
